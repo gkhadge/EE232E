@@ -38,6 +38,7 @@ g_2c = barabasi.game(nodesNum2, degreePro, directed = FALSE)
 deg_dist_2c <- degree(g_2c)
 hist(deg_dist_2c, main="Degree Distribution (2c)", xlab="Degree Number", ylab="Probability")
 dia_2c <- diameter(g_2c, unconnected = TRUE)
+is.connected(g_2c)
 
 #GCC calculation
 
@@ -53,5 +54,5 @@ sizes(community_str_2c)
 barplot(sizes(community_str_2c),  main="Community Sizes (2c)", xlab="Community Number", ylab="Community Size")
 
 #2-d
-smpl <- igraph.sample(1, 1000, 1000)
+smpl <- sample(1, 1000, 1000)
 
