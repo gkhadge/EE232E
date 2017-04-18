@@ -1,5 +1,4 @@
-# opt-cmd-R to run all code
-# shft-cmd-C to comment
+# HW 1, Problem 3
 
 rm(list = ls())
 
@@ -13,6 +12,7 @@ plot(g, vertex.size=8, vertex.label=NA)
 
 dg_dist = degree_distribution(g)
 barplot(dg_dist)
+
 
 # find communities
 fg <- fastgreedy.community(g)
