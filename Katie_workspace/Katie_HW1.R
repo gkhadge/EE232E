@@ -23,7 +23,9 @@ dia2a <- diameter(g2a, unconnected = TRUE)
 #2-b
 is.connected(g2a)
 cl <- clusters(g2a)
-gcc <- which.max(size)
+gccIndex <- which.max(cl$size)
+nonGccNodes <- (1:vcount(g))[cl$membership != gccIndex]
+gcc <- delete.vertices(g, nonGccNodes)
 
 #community structure
 community_str <- fastgreedy.community(graph, merges=TRUE, modularity=TRUE,membership=TRUE, weights=NULL)
@@ -34,16 +36,18 @@ size = sizes(community_str)
 #2-c
 g2c = barabasi.game(10000, -3, directed = FALSE)
 deg_dist2c <- degree_distribution(g2c)
-plot(deg_dist2c)
+barplot(deg_dist2c)
 dia2c <- diameter(g2c, unconnected = TRUE)
 
 #GCC calculation
 
 cl <- clusters(g2c)
-gcc <- which.max(size)
+gccIndex <- which.max(cl$size)
+nonGccNodes <- (1:vcount(g))[cl$membership != gccIndex]
+gcc <- delete.vertices(g, nonGccNodes)
 
 #community structure
-community_str <- fastgreedy.community(graph, merges=TRUE, modularity=TRUE,membership=TRUE, weights=NULL)
+community_str <- fastgreedy.community(gcc, merges=TRUE, modularity=TRUE,membership=TRUE, weights=NULL)
 modularity = modularity(community_str)
 size = sizes(community_str)
 
