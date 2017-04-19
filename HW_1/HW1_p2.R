@@ -58,7 +58,7 @@ sizes(community_str_2c)
 barplot(sizes(community_str_2c),  main="Community Sizes (2c)", xlab="Community Number", ylab="Community Size")
 
 #2-d
-chosennodes <- 1000
+chosennodes <- 10000
 degree_array <- vector()
 smpl <- sample(1:nodesNum2, chosennodes, replace=TRUE)
 for (i in 1:chosennodes){
@@ -79,7 +79,7 @@ plot(x_plot, degree_prob,  log = "xy", main = "Neighbor degree plot", xlab = "De
 
 dd1 <- degree_prob
 dd2 <- deg_dist_2a
-plot(x_plot, dd1, log="xy", main="Degree Distribution (2a and 2d)", xlab="Degree",ylab="Probability")
+plot(x_plot, dd1, log="y", main="Degree Distribution (2a and 2d)", xlab="Degree",ylab="Probability")
 points(x_plot_2a, dd2, col=2, pch=2)
 
 
