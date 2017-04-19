@@ -65,10 +65,10 @@ for (i in 1:chosennodes){
   vtx <- V(gcc_2c)[smpl[i]]
   #dg <- degree(gcc_2c, vtx)
   n_vtx <- neighbors(gcc_2c, vtx)
-  for (j in 1:length(n_vtx)){
-    neighbor_degree <- degree(gcc_2c, n_vtx[j])
-    degree_array <- c(degree_array, neighbor_degree)
-  }
+  
+  smpl2 <- sample(1:length(n_vtx),1,replace=TRUE)
+  neighbor_degree <- degree(gcc_2c, n_vtx[smpl2])
+  degree_array <- c(degree_array, neighbor_degree)
 }
 
 degree_prob <- hist(degree_array)$density
