@@ -13,9 +13,11 @@ nodesNum = 1000
 degreePro = -3
 
 g_2a = barabasi.game(nodesNum, degreePro, directed = FALSE)
-deg_dist_2a <- degree(g_2a)
-hist(deg_dist_2a, main="Degree Distribution (2a)", xlab="Degree Number", ylab="Probability")
+deg_dist_2a <- degree.distribution(g_2a)
+x_plot_2a = 0:(length(deg_dist_2a)-1)
+plot(deg_dist_2a, log = "xy", main="Degree Distribution (2a)", xlab="Degree Number", ylab="Probability")
 dia_2a <- diameter(g_2a, unconnected = TRUE)
+
 
 #2-b
 is.connected(g_2a)
@@ -35,8 +37,9 @@ barplot(sizes(community_str_2b),  main="Community Sizes (2b)", xlab="Community N
 nodesNum2 = 10000
 
 g_2c = barabasi.game(nodesNum2, degreePro, directed = FALSE)
-deg_dist_2c <- degree(g_2c)
-hist(deg_dist_2c, main="Degree Distribution (2c)", xlab="Degree Number", ylab="Probability")
+deg_dist_2c <- degree.distribution(g_2c)
+x_plot_2c = 0:(length(deg_dist_2c)-1)
+plot(deg_dist_2c, log = "xy", main="Degree Distribution (2c)", xlab="Degree Number", ylab="Probability")
 dia_2c <- diameter(g_2c, unconnected = TRUE)
 is.connected(g_2c)
 
@@ -54,19 +57,28 @@ sizes(community_str_2c)
 barplot(sizes(community_str_2c),  main="Community Sizes (2c)", xlab="Community Number", ylab="Community Size")
 
 #2-d
-chosennodes <- 100
+chosennodes <- 1000
 degree_array <- vector()
 smpl <- sample(1:nodesNum2, chosennodes, replace=TRUE)
 for (i in 1:chosennodes){
   vtx <- V(gcc_2c)[smpl[i]]
-  dg <- degree(gcc_2c, vtx)
-  neighbor_degree <- neighbors(gcc_2c, vtx)[1]
-  degree_array <- c(degree_array, neighbor_degree)/chosennodes
+  #dg <- degree(gcc_2c, vtx)
+  n_vtx <- neighbors(gcc_2c, vtx)
+  for (j in 1:length(n_vtx)){
+    neighbor_degree <- degree(gcc_2c, n_vtx[j])
+    degree_array <- c(degree_array, neighbor_degree)
+  }
 }
-y_plot = 0:(length(degree_array)-1)
-plot(y_plot,degree_array,  log = "xy", main = "Neighbor degree plot", xlab = "Degree", ylab = "Probability")
-  
-  
-  
+
+degree_prob <- hist(degree_array)$density
+x_plot = 0:(length(degree_prob)-1)
+
+plot(x_plot, degree_prob,  log = "xy", main = "Neighbor degree plot", xlab = "Degree", ylab = "Probability")
+
+
+dd1 <- degree_prob
+dd2 <- deg_dist_2a
+plot(x_plot, dd1, log="xy", main="Degree Distribution (2a and 2d)", xlab="Degree",ylab="Probability")
+points(x_plot_2a, dd2, col=2, pch=2)
 
 
