@@ -4,6 +4,7 @@
 ##Load package
 library(igraph)
 
+rm(list=ls())
 nodesNum = 1000
 
 #2 
@@ -47,7 +48,7 @@ is.connected(g_2c)
 
 cl_2c <- clusters(g_2c)
 gccIndex_2c <- which.max(cl_2c$size)
-nonGccNodes_2c <- (1:vcount(g))[cl_2c$membership != gccIndex_2c]
+nonGccNodes_2c <- (1:vcount(g_2c))[cl_2c$membership != gccIndex_2c]
 gcc_2c <- delete.vertices(g_2c, nonGccNodes_2c)
 
 #community structure
