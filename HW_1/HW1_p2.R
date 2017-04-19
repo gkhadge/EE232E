@@ -16,7 +16,7 @@ degreePro = -3
 g_2a = barabasi.game(nodesNum, degreePro, directed = FALSE)
 deg_dist_2a <- degree.distribution(g_2a)
 x_plot_2a = 0:(length(deg_dist_2a)-1)
-plot(deg_dist_2a, log = "xy", main="Degree Distribution (2a)", xlab="Degree Number", ylab="Probability")
+plot(deg_dist_2a, log = "y", main="Degree Distribution (2a)", xlab="Degree Number", ylab="Probability")
 dia_2a <- diameter(g_2a, unconnected = TRUE)
 
 
@@ -40,7 +40,7 @@ nodesNum2 = 10000
 g_2c = barabasi.game(nodesNum2, degreePro, directed = FALSE)
 deg_dist_2c <- degree.distribution(g_2c)
 x_plot_2c = 0:(length(deg_dist_2c)-1)
-plot(deg_dist_2c, log = "xy", main="Degree Distribution (2c)", xlab="Degree Number", ylab="Probability")
+plot(deg_dist_2c, log = "y", main="Degree Distribution (2c)", xlab="Degree Number", ylab="Probability")
 dia_2c <- diameter(g_2c, unconnected = TRUE)
 is.connected(g_2c)
 
@@ -77,9 +77,9 @@ x_plot = 0:(length(degree_prob)-1)
 plot(x_plot, degree_prob,  log = "xy", main = "Neighbor degree plot", xlab = "Degree", ylab = "Probability")
 
 
-dd1 <- degree_prob
-dd2 <- deg_dist_2a
-plot(x_plot, dd1, log="xy", main="Degree Distribution (2a and 2d)", xlab="Degree",ylab="Probability")
-points(x_plot_2a, dd2, col=2, pch=2)
+dd1 <- deg_dist_2a
+dd2 <- degree_prob
+plot(x_plot_2a, dd1, log="y", main="Degree Distribution (2a and 2d)", xlab="Degree",ylab="Probability")
+points(x_plot, dd2, col=2, pch=2)
 
 
