@@ -15,12 +15,14 @@ diameter(g_1a)
 
 # set parameters
 minSteps = 0
-maxSteps = numNodes/2
+maxSteps = numNodes/10
 stepInt = numNodes/100
 numIter = 10
 stepVec = seq(minSteps, maxSteps, stepInt)
 
 pathLenVec <- matrix(, nrow = numNodes, ncol = numIter)
+pathMeans = c()
+pathSds = c()
 startNodeVec <- sample(1:numNodes, numNodes, replace=FALSE)
 
 for (i in 1:length(stepVec)) {
@@ -35,9 +37,9 @@ for (i in 1:length(stepVec)) {
     }
   }
   pathMeans[i] <- mean(rowMeans(pathLenVec))
-  pathSts[i] <- mean(rowSds(pathLenVec))
+  pathSds[i] <- mean(rowSds(pathLenVec))
 }
 
 plot(stepVec, pathMeans, main="Mean Path Length vs. Step Length", xlab="Number of Steps", ylab="Mean Path Length")
-plot(stepVec, pathSts, main="Path Length Standard Deviation vs. Step Length", xlab="Number of Steps", ylab="Path Length Standard Deviation")
+plot(stepVec, pathSds, main="Path Length Standard Deviation vs. Step Length", xlab="Number of Steps", ylab="Path Length Standard Deviation")
 
