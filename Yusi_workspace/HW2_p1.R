@@ -4,12 +4,13 @@ library(igraph)
 
 # Part A: Create Undirected Random Network
 
-p = 0.01
+p = 0.008
 numNodes = 1000
 g_1a <- sample_gnp(numNodes, p)
 
 plot(g_1a, vertex.label = NA)
 diameter(g_1a)
+is.connected(g_1a)
 
 # Part B: Random Walk on Random Network
 
