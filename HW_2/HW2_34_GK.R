@@ -114,7 +114,7 @@ cor(deg_g_3c, pr)
 
 #problem 4 (a)
 # Random Walk and Teleport Params
-currStep <- 0
+currStep <- 0 
 minSteps <- 200000
 damping_factor <- 85 # in %
 
