@@ -1,13 +1,12 @@
 library(matrixStats)
 library(igraph)
 
-
 # Part A: Create Undirected Random Network and Barabasi Network
 
 useBarabasi = FALSE
 
 p = 0.01
-numNodes = 100
+numNodes = 10000
 
 if (useBarabasi)
 {
@@ -77,21 +76,23 @@ plot(steps, pathSds, main="Path Length Standard Deviation vs. Step Length", xlab
 # Part E: Obtain degree distribution results
 
 degreeHist_rw <- hist(degreeVec, plot = "FALSE")$density
-x_plot_rw <- 0:(length(degreeHist_rw)-1)
+x_plot_rw <- hist(degreeVec, plot = "FALSE")$mids       
+# Use histogram density and matching degree values for random walk
 degreeHist <- degree_distribution(g_1a)
 x_plot <- 0:(length(degreeHist)-1)
 
 # Plot degree distribution results
 # Use log-xy axes if Barabasi, linear axes if random
+# Plot the degree distribtution for graph as black circles, random walk as red triangles
 
 if (useBarabasi)
 {
   plot(x_plot, degreeHist, log = "xy", main="Degree Distribution For Barabasi Network", xlab="Degree", ylab="Probability")
   points(x_plot_rw, degreeHist_rw, col=2, pch=2)
+  # Plot Barabasi results on log-xy axes to see linearize degree distribution for easier characterization
 } else
 {
   plot(x_plot, degreeHist, main="Degree Distribution For Random Network", xlab="Degree", ylab="Probability")
   points(x_plot_rw, degreeHist_rw, col=2, pch=2)
 }
 
-# Plot the degree distribtution for random walk as black circles, graph as red triangles
