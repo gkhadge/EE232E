@@ -170,10 +170,8 @@ cor(actual_pagerank, page_rank_val)
 #problem 4 (b)
 # Random Walk and Teleport Params
 currStep <- 0
-minSteps <- 200000
+minSteps <- 1000000
 damping_factor <- 85 # in %
-
-actual_pagerank <- page_rank(g_4a)$vector
 
 # Graph params
 numNodes <- 1000
@@ -187,6 +185,7 @@ while (!is.connecsuted(g_4b))
   print("Not Connected, Regenerating")
 }
 
+actual_pagerank <- page_rank(g_4b)$vector
 # Initialize path. 
 path = c()
 
@@ -206,8 +205,8 @@ while (currStep < minSteps)
   }
   
   
-  #TODO, choose according to distribution in actual_pagerank
-  startNode <- sample(1:numNodes,1)
+  #Choose according to distribution in actual_pagerank
+  startNode <- sample(1:1000, 1, replace = TRUE, prob = actual_pagerank)
   
   # Single random walk segment, start node chosen by pagerank, run for numStepsSeg
   rw_seg <- random_walk(g_4b, start = startNode, steps = numStepsSeg)
@@ -225,4 +224,8 @@ q <- table(path)
 pr <- q/currStep
 page_rank_val = pr
 
-cor(actual_pagerank, page_rank_val)
+#creating personalized page rank with builtin function
+personalized_pagerank <- page_rank(g_4b, personalized=actual_pagerank)$vector
+
+plot(personalized_pagerank, page_rank_val)
+cor(personalized_pagerank, page_rank_val)
