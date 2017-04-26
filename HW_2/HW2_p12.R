@@ -3,7 +3,7 @@ library(igraph)
 
 # Part A: Create Undirected Random Network and Barabasi Network
 
-useBarabasi = FALSE
+useBarabasi = TRUE
 
 p = 0.01
 numNodes = 10000
@@ -30,12 +30,13 @@ diameter(g_1a)
 # Set parameters for random walk
 
 minSteps = 0
-maxSteps = 15
-stepInt = 1
+maxSteps = 40000
+stepInt = 1000
 numIter = numNodes
 stepVec = seq(minSteps, maxSteps, stepInt)
+stepVec[1] = 1
 
-pathLenVec <- matrix(, nrow = maxSteps, ncol = numIter)
+pathLenVec <- matrix(, nrow = maxSteps/stepInt+1, ncol = numIter)
 degreeVec <- c()
 
 pathMeans = c()
@@ -48,8 +49,9 @@ for (j in 1:numIter) {
   rw_d <- random_walk(g_1a, startNode, numNodes, mode = "out")
   
   # perform random walk and store vertices in rw
-  for (t in 1:maxSteps) {
-    pathLenVec[t,j] <- distances(g_1a, v=rw[1], to=rw[t], mode = "out", weights = NULL)
+  for (t in 1:(maxSteps/stepInt+1)) {
+    rw_current = stepVec[t]
+    pathLenVec[t,j] <- distances(g_1a, v=rw[1], to=rw[rw_current], mode = "out", weights = NULL)
     # get distance between starting point and ending point
     # find degree of ending node
   }
@@ -63,12 +65,11 @@ pathMeans <- rowMeans(pathLenVec)
 pathSds <- rowSds(pathLenVec)
 
 # Plot mean path length results
-steps <- 1:maxSteps - 1
-plot(steps, pathMeans, main="Mean Path Length vs. Step Length", xlab="Number of Steps", ylab="Mean Path Length")
-points(steps, sqrt(steps), col=2, pch=2)
+plot(stepVec, pathMeans, main="Mean Path Length vs. Step Length", xlab="Number of Steps", ylab="Mean Path Length")
+points(seq(1,100,10), sqrt(seq(1,100,10)), col=2, pch=2)
 
 # Plot path length standard deviation results
-plot(steps, pathSds, main="Path Length Standard Deviation vs. Step Length", xlab="Number of Steps", ylab="Standard Deviation")
+plot(stepVec, pathSds, main="Path Length Standard Deviation vs. Step Length", xlab="Number of Steps", ylab="Standard Deviation")
 
 # Part C: Explained in report
 # Part D: Re-run by changing numNodes to 100 and 10000
@@ -79,7 +80,7 @@ degreeHist_rw <- hist(degreeVec, plot = "FALSE")$density
 x_plot_rw <- hist(degreeVec, plot = "FALSE")$mids       
 # Use histogram density and matching degree values for random walk
 degreeHist <- degree_distribution(g_1a)
-x_plot <- 0:(length(degreeHist)-1)
+x_plot <- 1:length(degreeHist)
 
 # Plot degree distribution results
 # Use log-xy axes if Barabasi, linear axes if random
@@ -96,3 +97,8 @@ if (useBarabasi)
   points(x_plot_rw, degreeHist_rw, col=2, pch=2)
 }
 
+graph_dgMean <- mean(degree(g_1a))
+rw_dgMean <- mean(degreeVec)
+
+graph_dgMed <- median(degree(g_1a))
+rw_dgMed <- median(degreeVec)
