@@ -227,5 +227,6 @@ page_rank_val = pr
 #creating personalized page rank with builtin function
 personalized_pagerank <- page_rank(g_4b, personalized=actual_pagerank)$vector
 
-plot(personalized_pagerank, page_rank_val)
+#plot against built-in function
+plot (personalized_pagerank, page_rank_val, xlim=range(0,max(personalized_pagerank)),ylim=range(0,max(page_rank_val)), main = "4(b) Simulated personalized Page Rank vs. Actual personalized page rank", xlab = "Simulated personalized page rank", ylab = "Actual personalized page rank" )
 cor(personalized_pagerank, page_rank_val)
