@@ -19,10 +19,8 @@ if (useBarabasi)
     g_1a <- sample_gnp(numNodes, p)
     print("Not Connected, Regenerating")
   }
-  
 }
 
-#plot(g_1a, vertex.label = NA)
 diameter(g_1a)
 
 # Part B: Random Walk on Random Network and Barabasi Network
@@ -30,8 +28,8 @@ diameter(g_1a)
 # Set parameters for random walk
 
 minSteps = 0
-maxSteps = 40000
-stepInt = 1000
+maxSteps = 40000      # maximum number of steps for random walker to take
+stepInt = 1000        # step interval 
 numIter = numNodes
 stepVec = seq(minSteps, maxSteps, stepInt)
 stepVec[1] = 1
