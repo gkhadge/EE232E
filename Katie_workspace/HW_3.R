@@ -1,7 +1,7 @@
 rm(list=ls())
 library(igraph)
 
-setwd('/Users/eunsunlee/Documents/UCLA_Spring_2017/EE232E/HW_3')
+setwd('/Users/eunsunlee/Documents/UCLA_Spring_2at017/EE232E/HW_3')
 hw3graph <- "sorted_directed_net.txt"
 
 # Read in graph from file
@@ -93,20 +93,19 @@ comm_struct <- gcc_ud2_comm_FG
 
 # Random Walk and Teleport Params
 currStep <- 0
-minSteps <- 10000 # 1000000
+maxSteps <- 10000 # 1000000
 damping_factor <- 85 # in %
 # Initialize path. 
 path = c()
 
-
 #choose random start node i 
-startNode<- sample(vcount(g),1)
+startNode<- sample(vcount(g_6),1)
 
 # Run until you get enough steps in the path
-while (currStep < minSteps)
+while (currStep < maxSteps)
 {
   # Calculate length of segment before teleportation occurs
-  numStepsSeg <- 1 # Number of steps before teleportation occurs
+  numStepsSeg <- 1 # Initialize number of steps before teleportation occurs
   
   # Calculate whether teleportation occurs
   smp <- sample(1:100,1)
@@ -117,14 +116,25 @@ while (currStep < minSteps)
     smp <- sample(1:100,1)
   }
     
-  # Single random walk segment, start node chosen by pagerank, run for numStepsSeg
-  rw_seg <- random_walk(g_6, start = startNode, steps = numStepsSeg)
-  # Append segment to path
-  path = c(path,rw_seg)
+  currentNode<- startNode
+  
+  for(t in 1:numStepsSeg){
+    neighbors(g_6,currentNode)
+    #calculate edge weight 
+    edge_weight <- c()
+    
+    #calculate probability 
+    edge_weight_prob 
+    #sample nextNode
+    nextNode <-  sample(neighbors(g_6,startNode), 1, replace = TRUE, prob = edge_weight_prob)
+    # Append segment to path
+    path = c(path,nextNode)
+    currentNode <- nextNode
+  }
     
   # Increment number of steps
   currStep <- currStep + numStepsSeg
-  print(currStep/minSteps)
+  print(currStep/maxSteps)
 }
 
 # Extract table of node Instances
@@ -148,7 +158,7 @@ for (j in 1:30){
   index_jth <- attributes(v_j)$name
   
   #get top ith node index's membership
-  j_membership <-comm_struct$membership[index_jth]
+  j_membership <-comm_struct$membership[as.numeric(index_jth)]
     
   #build m_j (all 0s and 1 at j_membership)
   m_j[j_membership]<-1
