@@ -119,12 +119,19 @@ while (currStep < maxSteps)
   currentNode<- startNode
   
   for(t in 1:numStepsSeg){
-    neighbors(g_6,currentNode)
+    neigh_g_6 <- neighbors(g_6,currentNode)
     #calculate edge weight 
-    edge_weight <- c()
+    edge_weight <- rep(0,length(neigh_g_6))
+    for (k in 1:length(neigh_g_6)){
+      edge_weight[k] <- E(g_6,P=c(currentNode,neigh_g_6[k]))$weight
+    }
     
     #calculate probability 
-    edge_weight_prob 
+    edge_weight_prob <-  rep(0,length(neigh_g_6))
+    sum_weight <- sum(edge_weight_prob)
+    for (l in 1:length(neigh_g_6)){
+      edge_weight_prob[l] <- (1-edge_weight[k])/sum_weight
+    }
     #sample nextNode
     nextNode <-  sample(neighbors(g_6,startNode), 1, replace = TRUE, prob = edge_weight_prob)
     # Append segment to path
