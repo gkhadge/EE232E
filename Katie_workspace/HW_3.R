@@ -1,7 +1,7 @@
 rm(list=ls())
 library(igraph)
 
-setwd('/Users/eunsunlee/Documents/UCLA_Spring_2at017/EE232E/HW_3')
+setwd('/Users/eunsunlee/Documents/UCLA_Spring_2017/EE232E/HW_3')
 hw3graph <- "sorted_directed_net.txt"
 
 # Read in graph from file
@@ -72,7 +72,7 @@ E(gcc_LC_ud)$weight <- sqrt(E(gcc_LC_ud)$weight)
 gcc_LC_ud_FG <- fastgreedy.community(gcc_LC_ud)
 
 #Using induced.subgraph function
-sub_gcc_LC <- induced.subgraph(gcc_ud2, which(membership(gcc_ud2_comm_FG)) == largest_comm_index)
+sub_gcc_LC <- induced.subgraph(gcc_ud2, which(membership(gcc_ud2_comm_FG) == largest_comm_index))
 sub_gcc_LC_fg <- fastgreedy.community(sub_gcc_LC)
 
 #Problem 5 
@@ -91,93 +91,181 @@ for (i in large_comm_index){
 g_6 <- gcc_ud2
 comm_struct <- gcc_ud2_comm_FG
 
-# Random Walk and Teleport Params
-currStep <- 0
-maxSteps <- 10000 # 1000000
-damping_factor <- 85 # in %
-# Initialize path. 
-path = c()
+maxexample <- 4 
+example_count <- 0
 
-#choose random start node i 
-startNode<- sample(vcount(g_6),1)
-
-# Run until you get enough steps in the path
-while (currStep < maxSteps)
-{
-  # Calculate length of segment before teleportation occurs
-  numStepsSeg <- 1 # Initialize number of steps before teleportation occurs
+while(example_count<maxexample){
+  # Random Walk and Teleport Params
+  currStep <- 0
+  maxSteps <- 50 # 1000000
+  damping_factor <- 85 # in %
+  # Initialize path. 
+  path = c()
   
-  # Calculate whether teleportation occurs
-  smp <- sample(1:100,1)
-  while(smp<=damping_factor)
+  #choose random start node i 
+  startNode<- sample(V(g_6),1)
+  
+  #PLEASE CHECK: Do we add startNode to the path?
+  path <- c(path,startNode)
+  
+  # Run until you get enough steps in the path
+  while (currStep < maxSteps)
   {
-    # If no teleportation, continue incrementing numStepsSeg
-    numStepsSeg <- numStepsSeg + 1
+    # Calculate length of segment before teleportation occurs
+    numStepsSeg <- 1 # Initialize number of steps before teleportation occurs
+    
+    # Calculate whether teleportation occurs
     smp <- sample(1:100,1)
-  }
+    while(smp<=damping_factor)
+    {
+      # If no teleportation, continue incrementing numStepsSeg
+      numStepsSeg <- numStepsSeg + 1
+      smp <- sample(1:100,1)
+    }
+      
+    currentNode<- startNode
     
-  currentNode<- startNode
+    for(t in 1:numStepsSeg){
+      nodeNeighbors <- neighbors(g_6,currentNode)
+      #print("neighborNodes")
+      #print(nodeNeighbors)
+      numNeighbors <- length(nodeNeighbors)
+      
+      if(numNeighbors == 1){
+        nextNode <- nodeNeighbors
+      }else{
+        #calculate edge weight 
+        edge_weight <- rep(0,numNeighbors)
+        for (k in 1:numNeighbors){
+          edge_weight[k] <- E(g_6,P=c(currentNode,nodeNeighbors[k]))$weight
+        }
+        #calculate probability 
+        edge_weight_prob <-  rep(0,numNeighbors)
+        sum_weight <- sum(edge_weight)
+        for (l in 1:numNeighbors){
+          edge_weight_prob[l] <- (1-edge_weight[l]/sum_weight)/(numNeighbors-1)
+        }
+        #sample nextNode
+        nextNode <-  sample(nodeNeighbors, 1, replace = TRUE, prob = edge_weight_prob)
+        # Append segment to path
+      }
+      path = c(path,as.numeric(attributes(nextNode)$name))
+      currentNode <- nextNode
+    }
+      
+    # Increment number of steps
+    currStep <- currStep + numStepsSeg
+    print(currStep/maxSteps)
+  }
   
-  for(t in 1:numStepsSeg){
-    neigh_g_6 <- neighbors(g_6,currentNode)
-    #calculate edge weight 
-    edge_weight <- rep(0,length(neigh_g_6))
-    for (k in 1:length(neigh_g_6)){
-      edge_weight[k] <- E(g_6,P=c(currentNode,neigh_g_6[k]))$weight
-    }
+  # Extract table of node Instances
+  q <- table(path)
+  # Calculate probability of being at each node
+  pr <- q/currStep
+  #Visiting Probability of all nodes in the network
+  visiting_prob = pr 
+  
+  #sort visiting probability 
+  sorted_visiting_prob <- sort(visiting_prob,decreasing = TRUE, index.return=TRUE)
+  
+  #initialize M_i and m_j 
+  M_i = rep(0,length(comm_struct))
+  m_j = rep(0,length(comm_struct)) #n dimensional vector wiht only one element being 1
+  
+  #calculate M_i with nodes j of top 30 visiting probability
+  for (j in 1:30){
+    #get top ith visiting probability 
+    v_j <- sorted_visiting_prob[j]
+    #get top ith visiting probability's node index 
+    index_jth <- attributes(v_j)$name
     
-    #calculate probability 
-    edge_weight_prob <-  rep(0,length(neigh_g_6))
-    sum_weight <- sum(edge_weight_prob)
-    for (l in 1:length(neigh_g_6)){
-      edge_weight_prob[l] <- (1-edge_weight[k])/sum_weight
-    }
-    #sample nextNode
-    nextNode <-  sample(neighbors(g_6,startNode), 1, replace = TRUE, prob = edge_weight_prob)
-    # Append segment to path
-    path = c(path,nextNode)
-    currentNode <- nextNode
+    #get top ith node index's membership
+    j_membership <-comm_struct$membership[as.numeric(index_jth)]
+      
+    #build m_j (all 0s and 1 at j_membership)
+    m_j[j_membership]<-1
+    #print("v_j and m_j")
+    #print(index_jth)
+    #print(m_j)
+    
+    #calculate M_i
+    M_i <- M_i + (v_j*m_j)
+    #print("M_i")
+    #print(M_i)
+  
   }
-    
-  # Increment number of steps
-  currStep <- currStep + numStepsSeg
-  print(currStep/maxSteps)
+  
+  print("startnode is")
+  print(startNode)
+  print("M_i")
+  print(M_i)
+  
+  #find out whether M_i includes multiple values greater than the threshold
+  multiple_comm <- 0 
+  for(k in 1:length(M_i)){
+    if(M_i[k]>0.5){
+      multiple_comm <- multiple_comm +1
+    }
+  }
+  
+  #if there are multiple values passing the threshold from prvious for loop, add count to example_count
+  if(multiple_comm >1){
+    example_count <- example_count + 1
+    print("startNode with multiple communities")
+    print(startNode)
+  }
+}  
+  
+#PLEASE CHECK: Visualize the result
+#startNode should be the same as the startNode from above to compare the results
+#startNode <-1090
+
+#Initialize subgraph's verticies
+sub_v <- c()
+#add startNode to the sub-graph's verticies array
+sub_v <- c(sub_v,startNode)
+#Get neighbors of the startNode
+nodesNeighbors_start <- neighbors(g_6,startNode)
+print(nodesNeighbors_start)
+
+#for each neighbor of the startNode, add its neighbors to sub_v array
+for (r in 1:length(nodesNeighbors_start)){
+  sub_v <- c(sub_v,neighbors(g_6,nodesNeighbors_start[r]))
 }
 
-# Extract table of node Instances
-q <- table(path)
-# Calculate probability of being at each node
-pr <- q/currStep
-#Visiting Probability of all nodes in the network
-visiting_prob = pr 
+#remove the duplicats in sub_v array
+unique_sub_v <- unique(sub_v)
+#create subgraph with startNode, its neighbors, and their neighbors
+sub_g_6 <- induced_subgraph(g_6, unique_sub_v)
+plot(sub_g_6,  layout=layout_with_fr, vertex.size = 10, vertex.label.dist = 1,edge.arrow.size=0.5)
 
-#sort visiting probability 
-sorted_visiting_prob <- sort(visiting_prob,decreasing = TRUE, index.return=TRUE)
 
-#initialize M_i and m_j 
-M_i = rep(0,length(comm_struct))
-m_j = rep(0,length(comm_struct)) #n dimensional vector wiht only one element being 1
 
-for (j in 1:30){
-  #get top ith visiting probability 
-  v_j <- sorted_visiting_prob[j]
-  #get top ith visiting probability's node index 
-  index_jth <- attributes(v_j)$name
+#sanity check for numNeighbors == 1
+g_6 <- gcc_ud2
+comm_struct <- gcc_ud2_comm_FG
+count <- 0 
+currentNode <- 1 
+
+
+while(count <1){
+
+  nodeNeighbors <- neighbors(g_6,currentNode)
+  numNeighbors <- length(nodeNeighbors)
   
-  #get top ith node index's membership
-  j_membership <-comm_struct$membership[as.numeric(index_jth)]
-    
-  #build m_j (all 0s and 1 at j_membership)
-  m_j[j_membership]<-1
+  if(numNeighbors == 1){
+    print("currentNode")
+    print(currentNode)
+    print(nodeNeighbors)
+    print(numNeighbors)
+    count <-1 
+  }else{
+    print("no")
+    print(currentNode)
+    currentNode <- currentNode +1
+  }
   
-  #calculate M_i
-  M_i <- M_i + (v_j*m_j)
-
 }
 
-
-
-
-
-
-
+  
+  
