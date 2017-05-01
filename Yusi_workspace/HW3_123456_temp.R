@@ -7,15 +7,17 @@ hw3graph <- "sorted_directed_net.txt"
 # Read in graph from file
 g <- read_graph(hw3graph,format="ncol",directed=TRUE)
 
-#Problem1
+# Problem 1
 is.connected(g)
 
+# Problem 2
 # Extract GCC
 cl <- clusters(g)
 gccIndex <- which.max(cl$csize)
 nonGccNodes <- (1:vcount(g))[cl$membership != gccIndex]
 gcc <- delete.vertices(g, nonGccNodes)
 
+# Problem 3
 # Plot Outgoing Degree Distribution
 gcc_dg_out <- degree(gcc, mode = "out")
 gcc_dg_out_hist <- hist(gcc_dg_out, plot=FALSE)
@@ -54,7 +56,7 @@ modularity(gcc_ud1_comm)
 modularity(gcc_ud2_comm_FG)
 modularity(gcc_ud2_comm_LP)
 
-#Problem 4 
+# Problem 4 
 
 # TODO: PLEASE VERIFY CODE
 # Extract Largest Community form UD2_FG from 
