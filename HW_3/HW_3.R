@@ -7,7 +7,7 @@ hw3graph <- "sorted_directed_net.txt"
 # Read in graph from file
 g <- read_graph(hw3graph,format="ncol",directed=TRUE)
 
-#Problem1
+# Problem1
 is.connected(g)
 
 # Extract GCC
@@ -16,18 +16,20 @@ gccIndex <- which.max(cl$csize)
 nonGccNodes <- (1:vcount(g))[cl$membership != gccIndex]
 gcc <- delete.vertices(g, nonGccNodes)
 
+# Problem 2
 # Plot Outgoing Degree Distribution
 gcc_dg_out <- degree(gcc, mode = "out")
 gcc_dg_out_hist <- hist(gcc_dg_out,plot=FALSE)
-plot(gcc_dg_out_hist$count, log="y", type='h', lwd=10, lend=2, main = "Outgoing Degree Distribution", xlab = "Degree", ylab = "Number of Nodes")
+plot(gcc_dg_out_hist$count, log="xy", type='h', lwd=10, lend=2, main = "Outgoing Degree Distribution", xlab = "Degree", ylab = "Number of Nodes")
 #plot(degree.distribution(gcc, mode = "out"), main="Outgoing Degree Distribution")
 
 # Plot Incoming Degree Distribution
 gcc_dg_in <- degree(gcc, mode = "in")
 gcc_dg_in_hist <- hist(gcc_dg_in,plot=FALSE)
-plot(gcc_dg_in_hist$count, log="y", type='h', lwd=10, lend=2, main = "Incoming Degree Distribution", xlab = "Degree", ylab = "Number of Nodes")
+plot(gcc_dg_in_hist$count, log="xy", type='h', lwd=10, lend=2, main = "Incoming Degree Distribution", xlab = "Degree", ylab = "Number of Nodes")
 #plot(degree.distribution(gcc, mode = "in"), main="Incoming Degree Distribution")
 
+# Problem 3
 # Convert to undirected graph (Option 1)
 gcc_ud1 <- as.undirected(gcc, mode = "each")
 
@@ -54,6 +56,10 @@ modularity(gcc_ud1_comm)
 modularity(gcc_ud2_comm_FG)
 modularity(gcc_ud2_comm_LP)
 
+barplot(sizes(gcc_ud1_comm),  main="Community Structure ('each' Edge LP Method)", xlab="Community Number", ylab="Community Size")
+barplot(sizes(gcc_ud2_comm_FG),  main="Community Structure ('mean' Edge FG Method)", xlab="Community Number", ylab="Community Size")
+barplot(sizes(gcc_ud2_comm_LP),  main="Community Structure ('mean' Edge LP Method)", xlab="Community Number", ylab="Community Size")
+
 #Problem 4 
 
 # TODO: PLEASE VERIFY CODE
@@ -71,6 +77,8 @@ E(gcc_LC_ud)$weight <- sqrt(E(gcc_LC_ud)$weight)
 # Find Communities of subnet using FG
 gcc_LC_ud_FG <- fastgreedy.community(gcc_LC_ud)
 
+barplot(sizes(gcc_LC_ud_FG),  main="Community Structure of Largest Subcommunity", xlab="Community Number", ylab="Community Size")
+
 #Using induced.subgraph function
 sub_gcc_LC <- induced.subgraph(gcc_ud2, which(membership(gcc_ud2_comm_FG) == largest_comm_index))
 sub_gcc_LC_fg <- fastgreedy.community(sub_gcc_LC)
@@ -82,6 +90,8 @@ large_comm_index <- which(sizes(gcc_ud2_comm_FG)>100)
 for (i in large_comm_index){
   sub_gcc <- induced.subgraph(gcc_ud2, which(membership(gcc_ud2_comm_FG) == i))
   sub_gcc_fg <- fastgreedy.community(sub_gcc)
+  
+  barplot(sizes(sub_gcc_fg),  main=c("Community Structure of Subcommunity", i), xlab="Community Number", ylab="Community Size")
   
   #TODO: print information we need
 }
@@ -211,8 +221,8 @@ while(example_count<maxexample){
   #find out whether M_i includes multiple values greater than the threshold
   numComm <- 0 
   for(k in 1:length(M_i)){
-    if(M_i[k]>mean(M_i)){
-      numComm <- numComm +1
+    if(M_i[k]>0.1){
+      numComm <- numComm + 1
     }
   }
   
