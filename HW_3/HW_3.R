@@ -125,7 +125,7 @@ while(example_count<maxexample){
   startNode<- sample(V(g_6),1)
 
   #PLEASE CHECK: Do we add startNode to the path?
-  path <- c(path,as.numeric(attributes(startNode)$name))
+  #path <- c(path,as.numeric(attributes(startNode)$name))
   
   # Run until you get enough steps in the path
   while (currStep < maxSteps)
