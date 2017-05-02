@@ -1,7 +1,8 @@
 rm(list=ls())
 library(igraph)
 
-setwd('/Users/Yusi/Documents/EE232E/HW_3')
+#setwd('/Users/Yusi/Documents/EE232E/HW_3')
+setwd('/Users/eunsunlee/Documents/UCLA_Sprint_2017/EE232E/HW_3')
 hw3graph <- "sorted_directed_net.txt"
 
 # Read in graph from file
@@ -98,9 +99,17 @@ for (i in large_comm_index){
 
 
 #Problem 6 
-g_6 <- gcc_ud2
-comm_struct <- gcc_ud2_comm_FG
 
+#choose which optino to try Problem 6 
+option <- 2
+
+if(option == 2){
+  g_6 <- gcc_ud2
+  comm_struct <- gcc_ud2_comm_FG
+}else {
+  g_6 <- gcc_ud1
+  comm_struct <- gcc_ud1_comm
+}
 maxexample <- 4 
 example_count <- 0
 
