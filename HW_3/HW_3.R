@@ -2,7 +2,7 @@ rm(list=ls())
 library(igraph)
 
 #setwd('/Users/Yusi/Documents/EE232E/HW_3')
-setwd('/Users/eunsunlee/Documents/UCLA_Sprint_2017/EE232E/HW_3')
+setwd('/Users/eunsunlee/Documents/UCLA_Spring_2017/EE232E/HW_3')
 hw3graph <- "sorted_directed_net.txt"
 
 # Read in graph from file
@@ -101,12 +101,13 @@ for (i in large_comm_index){
 #Problem 6 
 
 #choose which optino to try Problem 6 
-option <- 2
+option <- 1
 
 if(option == 2){
   g_6 <- gcc_ud2
   comm_struct <- gcc_ud2_comm_FG
 }else {
+  print("option1")
   g_6 <- gcc_ud1
   comm_struct <- gcc_ud1_comm
 }
@@ -122,7 +123,7 @@ while(example_count<maxexample){
   path = c()
   
   #choose random start node i 
-  startNode<- sample(V(g_6),1)
+  startNode<- as.numeric(10476)#sample(V(g_6),1)
 
   #PLEASE CHECK: Do we add startNode to the path?
   #path <- c(path,as.numeric(attributes(startNode)$name))
@@ -169,9 +170,14 @@ while(example_count<maxexample){
         for (l in 1:numNeighbors){
           edge_weight_prob[l] <- (1-edge_weight[l]/sum_weight)/(numNeighbors-1)
         }
+        
+        print("edge_weight_prob")
+        print(edge_weight_prob)
         # sample nextNode
         nextNode <-  sample(nodeNeighbors, 1, replace = TRUE, prob = edge_weight_prob)
         # Append segment to path
+        print("nextNode")
+        print(nextNode)
       }
       path = c(path,as.numeric(attributes(nextNode)$name))
       currentNode <- nextNode
@@ -195,9 +201,14 @@ while(example_count<maxexample){
   
   #initialize M_i and m_j 
   M_i = rep(0,length(comm_struct))
-
+  if(option == 1){
+    print("option1")
+    v_j_length <- as.numeric(length(pr))
+  }else{
+    v_j_length <- as.numeric(30)
+  }
   #calculate M_i with nodes j of top 30 visiting probability
-  for (j in 1:30){
+  for (j in 1:v_j_length){
     #get top ith visiting probability 
     m_j = rep(0,length(comm_struct))  # n dimensional vector wiht only one element being 1
                                       # denotes the community that v_j belongs to
@@ -211,8 +222,8 @@ while(example_count<maxexample){
     print(j_membership)
     #build m_j (all 0s and 1 at j_membership)
     m_j[j_membership]<-1
-    #print("v_j and m_j")
-    #print(index_jth)
+    print("v_j and m_j")
+    print(index_jth)
     print(m_j)
     
     #calculate M_i
@@ -221,9 +232,6 @@ while(example_count<maxexample){
     #print(M_i)
   
   }
-  
-  print("startnode is")
-  print(startNode)
   print("M_i")
   print(M_i)
   
@@ -237,11 +245,22 @@ while(example_count<maxexample){
   
   #if there are multiple values passing the threshold from prvious for loop, add count to example_count
   if(numComm >1){
-    example_count <- example_count + 1
     print("startNode with multiple communities")
+    print("F: startnode is")
     print(startNode)
+    print("M_i")
+    print(M_i)
+    example_count <- example_count + 1
   }
 }  
+
+
+
+
+
+
+
+
   
 #PLEASE CHECK: Visualize the result
 #startNode should be the same as the startNode from above to compare the results
