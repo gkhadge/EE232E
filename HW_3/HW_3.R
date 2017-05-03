@@ -123,7 +123,7 @@ while(example_count<maxexample){
   path = c()
   
   #choose random start node i 
-  startNode<- 10177#sample(V(g_6),1)
+  startNode<- sample(length(V(g_6)),1)
 
   #PLEASE CHECK: Do we add startNode to the path?
   #path <- c(path,as.numeric(attributes(startNode)$name))
@@ -247,7 +247,7 @@ while(example_count<maxexample){
   if(numComm >1){
     print("startNode with multiple communities")
     print("F: startnode is")
-    print(startNode)
+    print(V(g_6)[startNode])
     print("M_i")
     print(M_i)
     example_count <- example_count + 1
