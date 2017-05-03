@@ -123,7 +123,7 @@ while(example_count<maxexample){
   path = c()
   
   #choose random start node i 
-  startNode<- as.numeric(10476)#sample(V(g_6),1)
+  startNode<- 10177#sample(V(g_6),1)
 
   #PLEASE CHECK: Do we add startNode to the path?
   #path <- c(path,as.numeric(attributes(startNode)$name))
@@ -151,7 +151,7 @@ while(example_count<maxexample){
     currentNode<- startNode
     
     for(t in 1:numStepsSeg){
-      nodeNeighbors <- neighbors(g_6,currentNode)
+      nodeNeighbors <- neighbors(g_6,V(g_6)[currentNode])
       #print("neighborNodes")
       #print(nodeNeighbors)
       numNeighbors <- length(nodeNeighbors)
@@ -162,7 +162,7 @@ while(example_count<maxexample){
         #calculate edge weight 
         edge_weight <- rep(0,numNeighbors)
         for (k in 1:numNeighbors){
-          edge_weight[k] <- E(g_6,P=c(currentNode,nodeNeighbors[k]))$weight
+          edge_weight[k] <- E(g_6,P=c(V(g_6)[currentNode],V(g_6)[nodeNeighbors[k]]))$weight
         }
         #calculate probability 
         edge_weight_prob <-  rep(0,numNeighbors)
@@ -171,15 +171,15 @@ while(example_count<maxexample){
           edge_weight_prob[l] <- (1-edge_weight[l]/sum_weight)/(numNeighbors-1)
         }
         
-        print("edge_weight_prob")
-        print(edge_weight_prob)
+       # print("edge_weight_prob")
+       # print(edge_weight_prob)
         # sample nextNode
         nextNode <-  sample(nodeNeighbors, 1, replace = TRUE, prob = edge_weight_prob)
         # Append segment to path
         print("nextNode")
         print(nextNode)
       }
-      path = c(path,as.numeric(attributes(nextNode)$name))
+      path = c(path,as.numeric(V(g_6)[nextNode]))
       currentNode <- nextNode
     }
       
