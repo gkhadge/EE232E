@@ -1,0 +1,22 @@
+# CHECK: Curve Fitting 
+x <- seq(1,length(dg_dist),length = length(dg_dist))
+dg_dist_log <-log(dg_dist)
+dg_dist_log[is.infinite(dg_dist_log)] <- NA
+NA_ind <- which(is.na(dg_dist_log))
+dg_dist_log <- dg_dist_log[-c(NA_ind)]
+x <- x[-c(NA_ind)]
+fit <- lm(dg_dist_log ~ log(x))
+#fit2 <- lm(log(dg_dist)~poly(log(x),1,raw=TRUE))
+xx <- seq(1,length(dg_dist),length = length(dg_dist))
+
+plot(x,dg_dist_log, xlab = "Degree", ylab = "Probability")
+dg_dist_predict = fit$coefficients[2]*x+fit$coefficients[1]
+lines(x, dg_dist_predict, col='red')
+
+# CHECK: Curve Fitting
+lo <- loess(dg_dist~x)
+plot(x,dg_dist, xlab = "Degree", ylab = "Probability")
+lines(predict(lo), col='red', lwd=2)
+
+
+plot(x,dg_dist, log = "xy", xlab = "Degree", ylab = "Probability")
