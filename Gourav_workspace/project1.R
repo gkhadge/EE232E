@@ -115,4 +115,18 @@ barplot(sizes(core_neigh_eb),  main=c("Community Structure of Core Neighbor Netw
 core_neigh_im <- cluster_infomap(core_neighbor_network, e.weights = NULL, v.weights = NULL, nb.trials = 10, modularity = TRUE)
 barplot(sizes(core_neigh_im),  main=c("Community Structure of Core Neighbor Network (Infomap)", i), xlab="Community Number", ylab="Community Size")
 
-# http://igraph.org/r/doc/cocitation.html
+# Problem 5
+# http://igraph.org/r/doc/cocitation.html 
+
+embedded_vec <- c()
+
+for (node in 1:length(core_nodes)){
+  core_neighbors <- neighbors(g, v=core_nodes[node])
+  core_personal_nodes <- c(core_nodes[node], core_neighbors)
+  core_personal_network <- induced_subgraph(g, core_personal_nodes)
+  
+  embedded_vec <- c(embedded_vec, cocitation(core_personal_network, v=V(g)[core_nodes[node]]$name))
+}
+
+hist(embedded_vec,freq = FALSE, main = "", xlab = "Embeddedness", ylab = "Probability")
+
