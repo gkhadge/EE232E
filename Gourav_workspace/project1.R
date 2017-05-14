@@ -120,13 +120,53 @@ barplot(sizes(core_neigh_im),  main=c("Community Structure of Core Neighbor Netw
 
 embedded_vec <- c()
 
+dispersion_vec <- c()
+
 for (node in 1:length(core_nodes)){
+  print(node)
   core_neighbors <- neighbors(g, v=core_nodes[node])
   core_personal_nodes <- c(core_nodes[node], core_neighbors)
   core_personal_network <- induced_subgraph(g, core_personal_nodes)
   
-  embedded_vec <- c(embedded_vec, cocitation(core_personal_network, v=V(g)[core_nodes[node]]$name))
+  #embedded_vec <- c(embedded_vec, cocitation(core_personal_network, v=V(g)[core_nodes[node]]$name))
+  
+  core_personal_network_without_core <- delete_vertices(core_personal_network, v=V(g)[core_nodes[node]]$name)
+  
+  
+  for (disp_node in 1:length(core_neighbors))
+  {
+    
+    sub_g <- delete_vertices(core_personal_network_without_core, core_neighbors[disp_node]$name)
+    
+    disp_node_neighbors <- neighbors(core_personal_network_without_core, core_neighbors[disp_node]$name)
+    
+    count <- 0
+    if (length(disp_node_neighbors) > 1)
+    {
+      for (node1 in 1:(length(disp_node_neighbors)-1))
+      {
+        for (node2 in (node1+1):length(disp_node_neighbors))
+        {
+          dist <- distances(sub_g, disp_node_neighbors[node1]$name,
+                                   disp_node_neighbors[node2]$name)
+          # n1 <- neighbors(core_personal_network, V(core_personal_network)[disp_node_neighbors[node1]]$name)
+          # n2 <- neighbors(core_personal_network, V(core_personal_network)[disp_node_neighbors[node2]]$name)
+          # if ( length(intersection(n1, n2)) == 2)
+          if (dist > 2)
+          {
+            # If disp_node and core_node are the only mutual connections then increase the dispersion count
+            count <- count + 1
+          }
+        #are.connected(delete_vertices(core_personal_network, c(core_nodes[node],core_neighbors[disp_node])), core_neighbors[node1], core_neighbors[node2])
+        }
+      }
+    }
+    dispersion_vec <- c(dispersion_vec,count)
+    #print(dispersion_vec)
+    print(disp_node)
+  }
 }
 
 hist(embedded_vec,freq = FALSE, main = "", xlab = "Embeddedness", ylab = "Probability")
+hist(dispersion_vec,freq = FALSE, main = "", xlab = "Dispersion", ylab = "Probability")
 
