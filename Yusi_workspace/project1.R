@@ -26,27 +26,33 @@ plot(dg_dist, main = "P1 degree distribution of Facebook graph")
 g_dg <- degree(g)
 g_dg_hist <- hist(g_dg ,plot=FALSE)
 plot(g_dg_hist$count, log="xy", type='h', lwd=10, lend=2, main = "P1 Degree Distribution Histogram of Facebook graph", xlab = "Degree", ylab = "Number of Nodes")
-
 # CHECK: Curve Fitting 
-x <- seq(0,length(dg_dist),length = length(dg_dist))
-fit2 <- lm(dg_dist~poly(x,3,raw=TRUE))
-xx <- seq(0,length(dg_dist),length = length(dg_dist))
-plot(x,dg_dist, xlab = "Degree", ylab = "Probability")
-lines(xx, predict(fit2, data.frame(x=xx)), col="red")
-# CHECK: Curve Fitting
-lo <- loess(dg_dist~x)
-plot(x,dg_dist, xlab = "Degree", ylab = "Probability")
-lines(predict(lo), col='red', lwd=2)
 
+x <- seq(1,length(dg_dist),length = length(dg_dist))
+dg_dist_log_raw <-log(dg_dist)
+plot(x,dg_dist,log = "xy", main = "Raw Degree Distribution", xlab = "Degree", ylab = "Probability")
 
-plot(x,dg_dist, log = "xy", xlab = "Degree", ylab = "Probability")
+dg_dist_log <- dg_dist_log_raw
+dg_dist_log[is.infinite(dg_dist_log_raw)] <- NA
+dg_dist_log[which(dg_dist_log < -7)] <- NA
+dg_dist_log[which(dg_dist_log > -4)] <- NA
+# clean up data by taking out -inf values, and values that are constant (would skew fit)
+
+NA_ind <- which(is.na(dg_dist_log))
+dg_dist_log <- dg_dist_log[-c(NA_ind)]
+x <- x[-c(NA_ind)]
+x_log = log(x)
+fit <- lm(dg_dist_log ~ x_log)
+
+plot(x_log,dg_dist_log, main = "Fitted Degree Distribution", xlab = "log(Degree)", ylab = "log(Probability)")
+dg_dist_predict = fit$coefficients[2]*x_log+fit$coefficients[1]
+lines(x_log, dg_dist_predict, col='red')
 
 # CHECK: What is your curve's total mean squared error? 
-mean(fit2$residuals^2)
+mean(fit$residuals^2)
 
 # What is the average degree? 
 avg_dg <- mean(degree(g))
-
 
 #Problem 2 
 # CHECK: Take the node 1 (the node whose ID is 1) => Guessing it is V(g)[1]?
@@ -133,5 +139,63 @@ barplot(sizes(core_neigh_eb),  main=c("Community Structure of Core Neighbor Netw
 # Infomap Community Finding Method
 core_neigh_im <- cluster_infomap(core_neighbor_network, e.weights = NULL, v.weights = NULL, nb.trials = 10, modularity = TRUE)
 barplot(sizes(core_neigh_im),  main=c("Community Structure of Core Neighbor Network (Infomap)", i), xlab="Community Number", ylab="Community Size")
-# 
-# # http://igraph.org/r/doc/cocitation.html
+
+# http://igraph.org/r/doc/cocitation.html
+
+
+# Problem 5
+
+embedded_vec <- c()
+
+dispersion_vec <- c()
+
+#:length(core_nodes)
+for (node in 1){
+  print(node)
+  core_neighbors <- neighbors(g, v=core_nodes[node])
+  core_personal_nodes <- c(core_nodes[node], core_neighbors)
+  core_personal_network <- induced_subgraph(g, core_personal_nodes)
+  
+  embedded_vec <- c(embedded_vec, cocitation(core_personal_network, v=V(g)[core_nodes[node]]$name))
+  
+  core_personal_network_without_core <- delete_vertices(core_personal_network, v=V(g)[core_nodes[node]]$name)
+  
+  
+  for (disp_node in 1:length(core_neighbors))
+  {
+    
+    sub_g <- delete_vertices(core_personal_network_without_core, core_neighbors[disp_node]$name)
+    
+    disp_node_neighbors <- neighbors(core_personal_network_without_core, core_neighbors[disp_node]$name)
+    
+    count <- 0
+    if (length(disp_node_neighbors) > 1)
+    {
+      for (node1 in 1:(length(disp_node_neighbors)-1))
+      {
+        for (node2 in (node1+1):length(disp_node_neighbors))
+        {
+          dist <- distances(sub_g, disp_node_neighbors[node1]$name,
+                            disp_node_neighbors[node2]$name)
+          # n1 <- neighbors(core_personal_network, V(core_personal_network)[disp_node_neighbors[node1]]$name)
+          # n2 <- neighbors(core_personal_network, V(core_personal_network)[disp_node_neighbors[node2]]$name)
+          # if ( length(intersection(n1, n2)) == 2)
+          if (dist > 2)
+          {
+            # If disp_node and core_node are the only mutual connections then increase the dispersion count
+            count <- count + 1
+          }
+          #are.connected(delete_vertices(core_personal_network, c(core_nodes[node],core_neighbors[disp_node])), core_neighbors[node1], core_neighbors[node2])
+        }
+      }
+    }
+    dispersion_vec <- c(dispersion_vec,count)
+    #print(dispersion_vec)
+    print(disp_node)
+  }
+}
+
+hist(embedded_vec,freq = FALSE, main = "", xlab = "Embeddedness", ylab = "Probability")
+hist(dispersion_vec,freq = FALSE, main = "", xlab = "Dispersion", ylab = "Probability")
+
+
