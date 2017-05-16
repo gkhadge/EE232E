@@ -10,7 +10,7 @@ edges_filenames <- list.files("gplus", pattern="*.edges", full.names = TRUE)
 circles_filenames <- list.files("gplus", pattern="*.circles", full.names = TRUE)
 node_list <- list.files("gplus", pattern="*.edges", full.names = FALSE)
 nodes_id <- sub(".edges", "\\1", node_list)
-#http://www.endmemo.com/program/R/sub.php
+
 
 circles <- list()
 for (i in 1:length(circles_filenames)){
