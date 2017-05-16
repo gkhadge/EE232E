@@ -66,7 +66,8 @@ node1_personal_network <- induced_subgraph(g, node1_personal_nodes)
 num_nodes_1 <- length(V(node1_personal_network))
 num_edges_1 <- length(E(node1_personal_network))
 
-
+plot(node1_personal_network, vertex.size = 5, vertex.label = NA, main = c("Personal Network of Node", V(g)[1]))
+V(g)[1]$color <- "#FF0000FF"
 # Problem 3
 
 dgs <- degree(g)
@@ -87,16 +88,37 @@ core_neighbors <- neighbors(g, v=core_nodes[1])
 core_personal_nodes <- c(core_nodes[1], core_neighbors)
 core_personal_network <- induced_subgraph(g, core_personal_nodes)
 
-plot(core_personal_network)
+plot(core_personal_network, vertex.label = NA, main = "Core Personal Network")
 
 # Fast Greedy Community Finding Method
 core_fg <- fastgreedy.community(core_personal_network)
 colors_fg <- rainbow(length(core_fg))
 colors_fg[3] = "#FFFF00"    # set third color to yellow for better differentiation
 
-barplot(sizes(core_fg), col=colors_fg, main=c("Community Structure of Core Personal Network (Fast Greedy) of Node", i), xlab="Community Number", ylab="Community Size")
+barplot(sizes(core_fg), col=colors_fg, main="Community Structure of Core Personal Network (Fast Greedy)", xlab="Community Number", ylab="Community Size")
 plot(core_personal_network,vertex.color=colors_fg[membership(core_fg)], vertex.label = NA,
-     layout=layout.fruchterman.reingold,main=c("Community Structure of Core Neighbor Network (Fast Greedy) of Node", i))
+     layout=layout.fruchterman.reingold,main="Community Structure of Core Personal Network (Fast Greedy)")
+
+v_disp <- "19"
+
+V(core_personal_network)$frame.color <- "grey"
+V(core_personal_network)[v_disp]$frame.color <- "black"
+
+E(core_personal_network)$lty <- 1
+E(core_personal_network)$color <- "gray"
+E(core_personal_network)$width <- 1
+
+disp_edges <- incident_edges(core_personal_network, v_disp)
+E(core_personal_network)$lty <- 5
+
+for (i in 1:length(disp_edges[[1]])){
+  E(core_personal_network)[disp_edges[[1]][i]]$color <- "SkyBlue2"
+  E(core_personal_network)[disp_edges[[1]][i]]$lty <- 1
+  E(core_personal_network)[disp_edges[[1]][i]]$width <- 3
+}
+
+plot(core_personal_network, vertex.color=colors_fg[membership(core_fg)], vertex.size = 5, vertex.label = NA, 
+     layout=layout.fruchterman.reingold,main="Community Structure of Core Neighbor Network (Fast Greedy)")
 
 # Edge Betweenness Community Finding Method
 
@@ -106,9 +128,9 @@ greys_eb <- replicate(length(core_eb)-n_large_comm, "#D3D3D3")   # make everythi
 colors_eb <- c(rainbow(n_large_comm), greys_eb)
 colors_eb[3] = "#FFFF00"    # set third color to yellow for better differentiation
 
-barplot(sizes(core_eb), col=colors_eb, main=c("Community Structure of Core Personal Network (Edge Betweenness) of Node", i), xlab="Community Number", ylab="Community Size")
+barplot(sizes(core_eb), col=colors_eb, main="Community Structure of Core Personal Network (Edge Betweenness) of Node", xlab="Community Number", ylab="Community Size")
 plot(core_personal_network,vertex.color=colors_eb[membership(core_eb)], vertex.label = NA,
-     layout=layout.fruchterman.reingold,main=c("Community Structure of Core Neighbor Network (Edge Betweeness) of Node", i))
+     layout=layout.fruchterman.reingold,main="Community Structure of Core Personal Network (Edge Betweeness) of Node")
 
 # Infomap Community Finding Method
 core_im <- cluster_infomap(core_personal_network, e.weights = NULL, v.weights = NULL, nb.trials = 10, modularity = TRUE)
@@ -116,9 +138,9 @@ greys_im <- replicate(length(core_im)-n_large_comm, "#D3D3D3")   # make everythi
 colors_im <- c(rainbow(n_large_comm), greys_im)
 colors_im[3] = "#FFFF00"    # set third color to yellow for better differentiation
 
-barplot(sizes(core_im), col=colors_im, main=c("Community Structure of Core Personal Network (Infomap) of Node", i), xlab="Community Number", ylab="Community Size")
+barplot(sizes(core_im), col=colors_im, main="Community Structure of Core Personal Network (Infomap) of Node", xlab="Community Number", ylab="Community Size")
 plot(core_personal_network,vertex.color=colors_im[membership(core_im)], vertex.label = NA,
-     layout=layout.fruchterman.reingold,main=c("Community Structure of Core Neighbor Network (Infomap) of Node", i))
+     layout=layout.fruchterman.reingold,main="Community Structure of Core Personal Network (Infomap) of Node")
 
 # Problem 4
 
@@ -130,14 +152,33 @@ plot(core_neighbor_network, vertex.label = NA, vertex.size = 3)
 
 # Fast Greedy Community Finding Method
 core_neigh_fg <- fastgreedy.community(core_neighbor_network)
-barplot(sizes(core_neigh_fg), main=c("Community Structure of Core Neighbor Network (Fast Greedy)", i), xlab="Community Number", ylab="Community Size")
+n_large_comm = 8
+greys_neigh_fg <- replicate(length(core_neigh_fg)-n_large_comm, "#D3D3D3")   # make everything other than largest 8 communities grey
+colors_neigh_fg <- c(rainbow(n_large_comm), greys_neigh_fg)
+colors_neigh_fg[3] = "#FFFF00"    # set third color to yellow for better differentiation
+
+barplot(sizes(core_neigh_fg), col=colors_neigh_fg, main="Community Structure of Core Neighbor Network (Fast Greedy) of Node", xlab="Community Number", ylab="Community Size")
+plot(core_neighbor_network,vertex.color=colors_neigh_fg[membership(core_neigh_fg)], vertex.label = NA,
+     layout=layout.fruchterman.reingold,main="Community Structure of Core Neighbor Network (Fast Greedy)")
 
 # Edge Betweenness Community Finding Method
-core_neigh_eb <- cluster_edge_betweenness(core_neighbor_network, weights = E(core_personal_network)$weight, directed = FALSE)
-barplot(sizes(core_neigh_eb),  main=c("Community Structure of Core Neighbor Network (Edge Betweenness)", i), xlab="Community Number", ylab="Community Size")
+core_neigh_eb <- cluster_edge_betweenness(core_neighbor_network, weights = E(core_neighbor_network)$weight, directed = FALSE)
+greys_neigh_eb <- replicate(length(core_neigh_eb)-n_large_comm, "#D3D3D3")   # make everything other than largest 8 communities grey
+colors_neigh_eb <- c(rainbow(n_large_comm), greys_neigh_eb)
+colors_neigh_eb[3] = "#FFFF00"    # set third color to yellow for better differentiation
+
+barplot(sizes(core_neigh_eb), col=colors_neigh_eb, main="Community Structure of Core Neighbor Network (Edge Betweenness)", xlab="Community Number", ylab="Community Size")
+plot(core_neighbor_network,vertex.color=colors_neigh_eb[membership(core_neigh_eb)], vertex.label = NA,
+     layout=layout.fruchterman.reingold,main="Community Structure of Core Neighbor Network (Edge Betweenness)")
 
 # Infomap Community Finding Method
 core_neigh_im <- cluster_infomap(core_neighbor_network, e.weights = NULL, v.weights = NULL, nb.trials = 10, modularity = TRUE)
-barplot(sizes(core_neigh_im),  main=c("Community Structure of Core Neighbor Network (Infomap)", i), xlab="Community Number", ylab="Community Size")
+greys_neigh_im <- replicate(length(core_neigh_im)-n_large_comm, "#D3D3D3")   # make everything other than largest 8 communities grey
+colors_neigh_im <- c(rainbow(n_large_comm), greys_neigh_im)
+colors_neigh_im[3] = "#FFFF00"    # set third color to yellow for better differentiation
+
+barplot(sizes(core_neigh_im), col=colors_neigh_im, main="Community Structure of Core Neighbor Network (Infomap)", xlab="Community Number", ylab="Community Size")
+plot(core_neighbor_network,vertex.color=colors_neigh_im[membership(core_neigh_im)], vertex.label = NA,
+     layout=layout.fruchterman.reingold,main="Community Structure of Core Neighbor Network (Infomap)")
 
 # http://igraph.org/r/doc/cocitation.html
