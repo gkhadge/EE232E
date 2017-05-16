@@ -26,27 +26,33 @@ plot(dg_dist, main = "P1 degree distribution of Facebook graph")
 g_dg <- degree(g)
 g_dg_hist <- hist(g_dg ,plot=FALSE)
 plot(g_dg_hist$count, log="xy", type='h', lwd=10, lend=2, main = "P1 Degree Distribution Histogram of Facebook graph", xlab = "Degree", ylab = "Number of Nodes")
-
 # CHECK: Curve Fitting 
-x <- seq(0,length(dg_dist),length = length(dg_dist))
-fit2 <- lm(dg_dist~poly(x,3,raw=TRUE))
-xx <- seq(0,length(dg_dist),length = length(dg_dist))
-plot(x,dg_dist, xlab = "Degree", ylab = "Probability")
-lines(xx, predict(fit2, data.frame(x=xx)), col="red")
-# CHECK: Curve Fitting
-lo <- loess(dg_dist~x)
-plot(x,dg_dist, xlab = "Degree", ylab = "Probability")
-lines(predict(lo), col='red', lwd=2)
 
+x <- seq(1,length(dg_dist),length = length(dg_dist))
+dg_dist_log_raw <-log(dg_dist)
+plot(x,dg_dist,log = "xy", main = "Raw Degree Distribution", xlab = "Degree", ylab = "Probability")
 
-plot(x,dg_dist, log = "xy", xlab = "Degree", ylab = "Probability")
+dg_dist_log <- dg_dist_log_raw
+dg_dist_log[is.infinite(dg_dist_log_raw)] <- NA
+dg_dist_log[which(dg_dist_log < -7)] <- NA
+dg_dist_log[which(dg_dist_log > -4)] <- NA
+# clean up data by taking out -inf values, and values that are constant (would skew fit)
+
+NA_ind <- which(is.na(dg_dist_log))
+dg_dist_log <- dg_dist_log[-c(NA_ind)]
+x <- x[-c(NA_ind)]
+x_log = log(x)
+fit <- lm(dg_dist_log ~ x_log)
+
+plot(x_log,dg_dist_log, main = "Fitted Degree Distribution", xlab = "log(Degree)", ylab = "log(Probability)")
+dg_dist_predict = fit$coefficients[2]*x_log+fit$coefficients[1]
+lines(x_log, dg_dist_predict, col='red')
 
 # CHECK: What is your curve's total mean squared error? 
-mean(fit2$residuals^2)
+mean(fit$residuals^2)
 
 # What is the average degree? 
 avg_dg <- mean(degree(g))
-
 
 #Problem 2 
 # CHECK: Take the node 1 (the node whose ID is 1) => Guessing it is V(g)[1]?
@@ -133,5 +139,5 @@ barplot(sizes(core_neigh_eb),  main=c("Community Structure of Core Neighbor Netw
 # Infomap Community Finding Method
 core_neigh_im <- cluster_infomap(core_neighbor_network, e.weights = NULL, v.weights = NULL, nb.trials = 10, modularity = TRUE)
 barplot(sizes(core_neigh_im),  main=c("Community Structure of Core Neighbor Network (Infomap)", i), xlab="Community Number", ylab="Community Size")
-# 
-# # http://igraph.org/r/doc/cocitation.html
+
+# http://igraph.org/r/doc/cocitation.html
