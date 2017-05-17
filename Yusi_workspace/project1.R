@@ -99,27 +99,6 @@ barplot(sizes(core_fg), col=colors_fg, main="Community Structure of Core Persona
 plot(core_personal_network,vertex.color=colors_fg[membership(core_fg)], vertex.label = NA,
      layout=layout.fruchterman.reingold,main="Community Structure of Core Personal Network (Fast Greedy)")
 
-v_disp <- "19"
-
-V(core_personal_network)$frame.color <- "grey"
-V(core_personal_network)[v_disp]$frame.color <- "black"
-
-E(core_personal_network)$lty <- 1
-E(core_personal_network)$color <- "gray"
-E(core_personal_network)$width <- 1
-
-disp_edges <- incident_edges(core_personal_network, v_disp)
-E(core_personal_network)$lty <- 5
-
-for (i in 1:length(disp_edges[[1]])){
-  E(core_personal_network)[disp_edges[[1]][i]]$color <- "SkyBlue2"
-  E(core_personal_network)[disp_edges[[1]][i]]$lty <- 1
-  E(core_personal_network)[disp_edges[[1]][i]]$width <- 3
-}
-
-plot(core_personal_network, vertex.color=colors_fg[membership(core_fg)], vertex.size = 5, vertex.label = NA, 
-     layout=layout.fruchterman.reingold,main="Community Structure of Core Neighbor Network (Fast Greedy)")
-
 # Edge Betweenness Community Finding Method
 
 core_eb <- cluster_edge_betweenness(core_personal_network, weights = E(core_personal_network)$weight, directed = FALSE)
@@ -182,3 +161,65 @@ plot(core_neighbor_network,vertex.color=colors_neigh_im[membership(core_neigh_im
      layout=layout.fruchterman.reingold,main="Community Structure of Core Neighbor Network (Infomap)")
 
 # http://igraph.org/r/doc/cocitation.html
+
+# Problem 5: Plotting High Dispersion Nodes
+
+c_node <- 1
+v_disp <- "19"
+v_emb <- "56"
+# v_disp_emb <- "19"
+
+core_neighbors <- neighbors(g, v=core_nodes[c_node])
+core_personal_nodes <- c(core_nodes[c_node], core_neighbors)
+core_personal_network <- induced_subgraph(g, core_personal_nodes)
+
+core_fg <- fastgreedy.community(core_personal_network)
+colors_fg <- rainbow(core_fg)
+# 
+# n_large_comm = 8
+# greys_fg <- replicate(length(core_fg)-n_large_comm, "#D3D3D3")   # make everything other than largest 8 communities grey
+# colors_fg <- c(rainbow(n_large_comm), greys_fg)
+# colors_fg[3] = "#FFFF00"    # set third color to yellow for better differentiation
+
+# settings for non-special nodes
+V(core_personal_network)$frame.color <- "grey"
+
+# set a different frame color for special nodes
+V(core_personal_network)[v_disp]$frame.color <- "black"
+V(core_personal_network)[v_emb]$frame.color <- "black"
+# V(core_personal_network)[v_disp_emb]$frame.color <- "black"
+
+# settings for non-special edges
+E(core_personal_network)$lty <- 1
+E(core_personal_network)$width <- 1
+E(core_personal_network)$color <- "gray"
+
+disp_edges <- incident_edges(core_personal_network, v_disp)
+emb_edges <- incident_edges(core_personal_network, v_emb)
+# disp_emb_edges <- incident_edges(core_personal_network, v_disp_emb)
+
+E(core_personal_network)$lty <- 3
+
+for (i in 1:length(disp_edges[[1]])){
+  # highest dispersion
+  E(core_personal_network)[disp_edges[[1]][i]]$color <- "SkyBlue2"
+  E(core_personal_network)[disp_edges[[1]][i]]$lty <- 1
+  E(core_personal_network)[disp_edges[[1]][i]]$width <- 3
+}
+
+for (i in 1:length(emb_edges[[1]])){
+  # highest dispersion
+  E(core_personal_network)[emb_edges[[1]][i]]$color <- "DarkGreen"
+  E(core_personal_network)[emb_edges[[1]][i]]$lty <- 1
+  E(core_personal_network)[emb_edges[[1]][i]]$width <- 3
+}
+# 
+# for (i in 1:length(disp_emb_edges[[1]])){
+#   # highest dispersion
+#   E(core_personal_network)[disp_emb_edges[[1]][i]]$color <- "Red"
+#   E(core_personal_network)[disp_emb_edges[[1]][i]]$lty <- 1
+#   E(core_personal_network)[disp_emb_edges[[1]][i]]$width <- 3
+# }
+
+plot(core_personal_network, vertex.color=colors_fg[membership(core_fg)], vertex.size = 5, vertex.label = NA, 
+     layout=layout.fruchterman.reingold,main="Community Structure of Core Neighbor Network (Fast Greedy)")
