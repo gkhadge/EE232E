@@ -124,8 +124,9 @@ for actor_i in ActorDict.keys():
     ActorNeighborDict = defaultdict(list)
 
     # Progress Counter
-    print count/numActors
     count += 1
+    if (count % int(numActors/1000) == 0):
+        print count/numActors
 
     # Loop over all Movies from actor_i
     for movie in ActorDict[actor_i]:
@@ -182,7 +183,8 @@ for movie_i in Movies_sorted:
 
     # Progress Counter
     count += 1
-    print count/numMovies
+    if (count % int(numMovies/1000) == 0):
+        print count/numMovies
 
     # Loop over all actors in movie_i
     for actor in MovieDict[movie_i]:
