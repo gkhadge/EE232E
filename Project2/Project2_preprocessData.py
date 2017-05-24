@@ -55,7 +55,6 @@ with open(UnfilteredActorFile) as f:
 
                    # Make do with the original title, with whitespace stripped
                    makeshiftTile = movie.strip()
-                   print makeshiftTile
                    # Add it to the dictionary if it's not the empty string
                    if makeshiftTile:
                        ActorDict[tokens[0]].append(makeshiftTile.replace(' ', ''))
@@ -78,7 +77,6 @@ with open(UnfilteredActressFile) as f:
 
                    # Make do with the original title, with whitespace stripped
                    makeshiftTile = movie.strip()
-                   print makeshiftTile
                    # Add it to the dictionary if it's not the empty string
                    # (without whitespace in movies)
                    if makeshiftTile:
