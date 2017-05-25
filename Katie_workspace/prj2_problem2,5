@@ -1,0 +1,40 @@
+rm(list=ls())
+library(igraph)
+
+#problem2
+setwd('/Users/eunsunlee/Documents/UCLA_Spring_2017/EE232E/Project2')
+actor_edgelist <- "ActorNetwork.txt"
+# Read in graph from file
+g_actor <- read_graph(actor_edgelist,format="ncol",directed=TRUE)
+
+g_actor_pr <- page_rank(g_actor, directed = TRUE, damping = 0.85, personalized = NULL, weights = NULL,
+          options = NULL)$vector
+
+top_10_actors <- c()
+top_10_values <- tail(sort(g_actor_pr),10)
+for(i in 1:10){
+  top_10_actors<- c(top_10_actors, which(g_actor_pr==top_10_values[i]))
+}
+
+
+
+movie_edgelist <- "MovieNetwork.txt"
+# Read in graph from file
+g_movie <- read_graph(movie_edgelist,format="ncol",directed=FALSE)
+
+g_movie_fg <- cluster_fast_greedy(g_movie)
+
+# Check: argument & weight fast_greedy not working
+m_g_movie <- as.undirected(g_movie,mode = "collapse")
+
+
+g_movie_simp <- simplify(g_movie, remove.multiple=TRUE)
+g_movie_fg <- fastgreedy.community(g_movie_simp)
+g_movie_fg_n <- g_movie_fg
+
+## Export to RData file
+filename <- "movie_fg.RData"
+save(g_movie_fg,file=filename)
+
+load("movie_fg.RData")
+
