@@ -5,10 +5,11 @@ rm(list=ls())
 library(igraph)
 
 load("/Users/Yusi/Downloads/movie_fg.RData")
-load("/Users/Yusi/Documents/EE232E/Yusi_workspace/movie_actor_graphs.RData")
+#load("/Users/Yusi/Documents/EE232E/Yusi_workspace/movie_actor_graphs.RData")
 #movie_list = "/Users/Yusi/Documents/EE232E/Project2/MovieNetwork.txt"
 #actor_list = "/Users/Yusi/Documents/EE232E/Project2/ActorNetwork.txt"
-
+load("/Users/Yusi/Documents/EE232E/Yusi_workspace/workspace_0530.RData")
+load("/Users/Yusi/Documents/EE232E/Yusi_workspace/rating_data_list.RData")
 #g_movie <- read_graph(movie_list, format =  "ncol", directed = FALSE)
 #g_actor <- read_graph(actor_list, format =  "ncol", directed = TRUE)
 
@@ -37,7 +38,7 @@ for (i in 1:length(rating_data)){
 }
 rating_data_vals <- as.numeric(rating_data_vals)
 rating_data_list <- setNames(object = rating_data_vals, rating_data_names)
-
+save(rating_data_list,file="/Users/Yusi/Documents/EE232E/Project2/rating_data_list.RData")
 
 #### BvS Top Neighbors #####
 n_neigh <- 20
@@ -155,6 +156,30 @@ MI_top_rating
 M_top
 M_top_rating
 
-save(BvS_top_rating,file="/Users/Yusi/Documents/EE232E/Project2/BvS_top_rating.RData")
-save(MI_top_rating,file="/Users/Yusi/Documents/EE232E/Project2/MI_top_rating.RData")
-save(M_top_rating,file="/Users/Yusi/Documents/EE232E/Project2/M_top_rating.RData")
+# save(BvS_top_rating,file="/Users/Yusi/Documents/EE232E/Project2/BvS_top_rating.RData")
+# save(MI_top_rating,file="/Users/Yusi/Documents/EE232E/Project2/MI_top_rating.RData")
+# save(M_top_rating,file="/Users/Yusi/Documents/EE232E/Project2/M_top_rating.RData")
+
+# Problem 7
+
+
+# BvS Rating: 6.7
+# MI Rating: 7.4
+# Minions: 6.4
+
+# Unweighted Means
+
+BvS_mean <- mean(BvS_top_rating, na.rm=TRUE)
+MI_mean <- mean(MI_top_rating, na.rm=TRUE)
+M_mean <- mean(M_top_rating, na.rm=TRUE)
+
+# Weighted Means
+
+BvS_weights_n <- BvS_weights[BvS_ind]/sum(BvS_weights[BvS_ind])
+MI_weights_n <- MI_weights[MI_ind]/sum(MI_weights[MI_ind])
+M_weights_n <- M_weights[M_ind]/sum(M_weights[M_ind])
+
+BvS_mean_w <- weighted.mean(BvS_top_rating, BvS_weights_n, na.rm = TRUE)
+MI_mean_w <- weighted.mean(MI_top_rating, MI_weights_n, na.rm = TRUE)
+M_mean_w <- weighted.mean(M_top_rating, M_weights_n, na.rm = TRUE)
+
