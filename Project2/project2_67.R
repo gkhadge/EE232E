@@ -43,7 +43,7 @@ M_neigh <- neighbors(g_movie, v = M)
 #save(rating_data_list,file="/Users/Yusi/Documents/EE232E/Project2/rating_data_list.RData")
 
 #### BvS Top Neighbors #####
-#n_neigh <- 20
+n_neigh <- 20
 
 BvS_edgelist <- c()
 
@@ -56,13 +56,8 @@ BvS_weights <- E(g_movie, BvS_edgelist)$weight
 
 BvS_ind <- c()
 BvS_weights_temp <- BvS_weights
-# 
-# for (i in 1:n_neigh){
-#   BvS_ind <- c(BvS_ind, which.max(BvS_weights_temp))
-#   BvS_weights_temp[which.max(BvS_weights_temp)]=0
-# }
 
-for (i in 1:length(BvS_neigh)){
+for (i in 1:n_neigh){
   BvS_ind <- c(BvS_ind, which.max(BvS_weights_temp))
   BvS_weights_temp[which.max(BvS_weights_temp)]=0
 }
@@ -89,13 +84,8 @@ MI_weights <- E(g_movie, MI_edgelist)$weight
 
 MI_ind <- c()
 MI_weights_temp <- MI_weights
-# 
-# for (i in 1:n_neigh){
-#   MI_ind <- c(MI_ind, which.max(MI_weights_temp))
-#   MI_weights_temp[which.max(MI_weights_temp)]=0
-# }
 
-for (i in 1:length(MI_neigh)){
+for (i in 1:n_neigh){
   MI_ind <- c(MI_ind, which.max(MI_weights_temp))
   MI_weights_temp[which.max(MI_weights_temp)]=0
 }
@@ -112,7 +102,7 @@ for (i in 1:length(MI_top)){
 #### M Top Neighbors #####
 M_edgelist <- c()
 
-for (i in 1:length(MI_neigh)){
+for (i in 1:length(M_neigh)){
   M_edgelist <- c(M_edgelist, M, M_neigh[i]$name)
 }
 
@@ -121,18 +111,11 @@ M_weights <- E(g_movie, M_edgelist)$weight
 
 M_ind <- c()
 M_weights_temp <- M_weights
-# 
-# for (i in 1:n_neigh){
-#   M_ind <- c(M_ind, which.max(M_weights_temp))
-#   M_weights_temp[which.max(M_weights_temp)]=0
-# }
-# 
 
-for (i in 1:length(M_neigh)){
+for (i in 1:n_neigh){
   M_ind <- c(M_ind, which.max(M_weights_temp))
   M_weights_temp[which.max(M_weights_temp)]=0
 }
-
 
 M_top <- M_neigh[M_ind]
 
