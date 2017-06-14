@@ -50,6 +50,7 @@ for (i in 1:n_stocks){
 
 plot(g_mst, vertex.label = NA, vertex.color=sector_sorted_colors, vertex.size = 5, main = "Daily MST")
 
+barplot(rep(1,11),col=colors_s, main = "Colors Used for Vertices")
 
 ##################################################################################################
 # Problem 7: Modifying Correlation
