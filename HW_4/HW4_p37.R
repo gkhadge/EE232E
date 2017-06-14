@@ -18,6 +18,7 @@ n_stocks <- length(V(g_stocks))
 n_sectors <- 11
 
 g_mst <- mst(g_stocks)
+#write_graph(g_mst, 'StockNetwork_MST.txt', format = "ncol")
 plot(g_mst, vertex.label = NA, vertex.size = 5)
 
 sector_list <- setNames(object = sector_file$Sector, sector_file$Symbol)
