@@ -4,11 +4,18 @@ rm(list=ls())
 library(igraph)
 
 ##################################################################################################
-# Problem 3
+# Problem 3/6
 ##################################################################################################
 
-# Load the stock edgelist
+## Load the stock edgelist
+## Daily log return (PROBLEM 3)
 stock_file <- file("/Users/Yusi/Documents/EE232E/HW_4/StockNetworkFile.txt")
+plot_title <- "Daily MST"
+## Weekly log return (PROBLEM 6)
+#stock_file <- file("/Users/Yusi/Documents/EE232E/HW_4/StockNetworkFile_Weekly.txt")
+#plot_title <- "Weekly MST"
+
+# Sector labels
 sector_file <- read.csv("/Users/Yusi/Documents/EE232E/HW_4/finance_data/Name_sector.csv", header = TRUE, sep = ",", quote = "\"")
 
 # create stock graph
@@ -49,7 +56,7 @@ for (i in 1:n_stocks){
   sector_sorted_colors[i] <- sector_color_list[V(g_mst)[i]$name]
 }
 
-plot(g_mst, vertex.label = NA, vertex.color=sector_sorted_colors, vertex.size = 5, main = "Daily MST")
+plot(g_mst, vertex.label = NA, vertex.color=sector_sorted_colors, vertex.size = 5, main = plot_title)
 
 barplot(rep(1,11),col=colors_s, main = "Colors Used for Vertices")
 
